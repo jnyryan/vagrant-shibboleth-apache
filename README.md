@@ -1,9 +1,22 @@
 # vagrant-shibboleth
 
-  create a shibboleth Service Provider that runs on Apache
+  create a shibboleth Service Provider that runs on Apache on Ubuntu
 
+## Usage
 
-# Usage
+I have not configured it to start up automatically yet so you will need to
+ssh to the server and start it there.
+
+Also a bug on the Ubuntu version means the directory ```/var/run/shibboleth```
+needs to be created each time the server boots as /var/run is volatile.
+
+``` bash
+vagrant up provider=virtualbox
+```
+
+Once ssh'd, ru the following
+
+```bash
 # bug
 if [ ! -e /var/run/shibboleth ]
 then
@@ -12,9 +25,10 @@ fi
 
 # start the service
 /opt/shibboleth-sp/sbin/shibd
+```
 
 ## Troubleshooting
-By default, the Shibboleth module is configured to log information on behalf of Apache to
+By default, the Shibboleth module is configured to log information on behalf of Apache, these are written to:
 ```
 tail /opt/shibboleth-sp/var/log/shibboleth-www/native.log
 tail /opt/shibboleth-sp/var/log/shibboleth-www/native_warn.log
@@ -28,8 +42,6 @@ tail /opt/shibboleth-sp/var/log/shibboleth/signature.log
 tail /opt/shibboleth-sp/var/log/shibboleth/transaction.log
 
 ```
-
-
 
 ## References
 
