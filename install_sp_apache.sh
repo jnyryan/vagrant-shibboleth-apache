@@ -4,7 +4,7 @@ set -e
 
 # Prerequisites
 apt-get update -y
-apt-get install -y build-essential checkinstall make gcc
+apt-get install -y build-essential checkinstall make gcc silversearcher-ag
 # libcurl3 libssl-dev libcrypto
 
 SRC=/home/vagrant/src
@@ -74,12 +74,22 @@ cd -
 
 # install Shibboloth
 cd ${SRC}/shibboleth-sp-2.5.6
-./configure --with-log4shib=/opt/shibboleth-sp --enable-apache-13  --with-apxs=/usr/bin/apxs --enable-apache-20 --with-apxs2=/usr/bin/apxs --prefix=/opt/shibboleth-sp >> ${SRC}/build.log
-#  make && make install
-
-#  ./configure --with-saml=/opt/shibboleth-sp --enable-apache-22 --with-log4shib=/opt/shibboleth-sp --with-xmltooling=/opt/shibboleth-sp --prefix=/opt/shibboleth-sp -C
-
+./configure --with-log4shib=/opt/shibboleth-sp --enable-apache-13  --with-apxs=/usr/bin/apxs --enable-apache-20 --with-apxs2=/usr/bin/apxs --prefix=/opt/shibboleth-sp && make && make install && echo "Completed shibboleth" >> ${SRC}/build.log
 cd -
+
+
+export LD_LIBRARY_PATH=/opt/shibboleth-sp/lib
+
+cat /vagrant/etc/apache24.conf >> /etc/apache2/apache2.conf
+
+# bug
+if [ ! -e /var/run/shibboleth ]
+then
+   mkdir /var/run/shibboleth
+fi
+
+# start the service
+/opt/shibboleth-sp/sbin/shibd
 
 #if [ ! -d '${SRC}/nginx-http-shibboleth' ]; then
 #  git clone https://github.com/nginx-shib/nginx-http-shibboleth.git ${SRC}/nginx-http-shibboleth
