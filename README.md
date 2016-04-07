@@ -1,30 +1,50 @@
 # vagrant-shibboleth-sp
 
-A shibboleth Service Provider that running on Apache and Ubuntu
+An example shibboleth Service Provider that running on Apache and Ubuntu.
+
+## Overview
+
+This is an automated process to set up Shibboleth Service Provider on a
+virtual machine hosted in VirtualBox.
+
+Once completed you will have a hosted website [https://localhost:51080/secure](https://localhost:51080/secure)
+that redirects to Harvard IdP. Since Harvard do not know who we are, they will
+throw an error, but the demo will prove we have set up Shibboleth correctly and
+you can alter the IdP as required.
+
+It uses ```vagrant up``` to do 2 things
+
+First, using its VagrantFile
+- Downloads, installs and starts an Ubuntu image
+- Forwards ports on host 51080 & 51443 to VM ports 80 and 443  
+
+Then, uses the [install script](./install.sh) which does most of the heavy work:
+- Updates and installs required packages
+- Downloads/installs Shibboleth and its dependencies
+- Configures Shibboleth to use an external IdP
 
 ## Prerequisites
 
-This sets up Shibboleth on a virtual machine hosted in VirtualBox and uses
-Vagrant to script the setup. You'll need both these free apps to get going.
+You'll need both these free apps to get going.
 
 Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 Install [Vagrant](https://www.vagrantup.com/)
 
 ## Setup
 
-The provisioning of the VM using ```vagrant up``` uses the [install script](./install.sh) which does most of the heavy work:
-- Updates and installs required packages
-- Downloads/installs Shibboleth and its dependencies
-- Forwards ports on host 50080 & 50443 to VM ports 80 and 443
-
-There is some manual work to be done on the VM once the script has completed so you will need to ssh to the server and start it there.
+There is some manual work to be done on the VM once the install script has
+completed so you will need to ssh to the server and start it there.
 
 First, provision the virtual machine
 ``` bash
 vagrant up provider=virtualbox
 ```
 
-Now wait 20 minutes while it downloads the components, compiles and installs them
+Now wait 20 minutes while it downloads the components, compiles and installs them.
+Coffee at this time might be a good choice, perhaps a few minutes on an xBox or
+you console of choice. Mobile games are also a good option.
+Or you could read some of the References below.
+
 ``` bash
 vagrant ssh
 ```
@@ -46,12 +66,12 @@ curl https://localhost:51080/secure
 
 ## Next steps
 
-Set up an IdP
+- Set up your own IdP (I will hopefully have this done soon)
+- Add your own IdP metadata to replace [stage-idp-metadata.xml](./etc/stage-idp-metadata.xml)
+- Update the [shibboleth2.xml](./etc/shibboleth2.xml) to reference your matadata
 
+***Note*** see references below for details on setting up metadata for IdP
 
-## Configuring and testing with Harvard IdP
-
-[Configure Shibboleth for the Harvard IdP (Pre-Production) Section](http://iam.harvard.edu/resources/saml-shibboleth-integration)
 
 ## Troubleshooting
 By default, the Shibboleth module is configured to log information on behalf of Apache, these are written to:
