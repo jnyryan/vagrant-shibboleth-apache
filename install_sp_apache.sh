@@ -4,14 +4,12 @@ set -e
 
 # Prerequisites
 apt-get update -y
-apt-get install -y build-essential checkinstall make gcc silversearcher-ag
-# libcurl3 libssl-dev libcrypto
+apt-get install -y build-essential checkinstall make gcc silversearcher-ag apache2
 
 SRC=/home/vagrant/src
 mkdir -p $SRC
 sudo chown $USER $SRC
 sudo chmod u+rwx $SRC
-#apt-get install -y wget apache2
 
 cd $SRC
 wget http://shibboleth.net/downloads/log4shib/latest/log4shib-1.0.9.tar.gz
@@ -27,15 +25,6 @@ tar xvfz xml-security-c-1.7.3.tar.gz
 tar xvfz xmltooling-1.5.6.tar.gz
 tar xvfz opensaml-2.5.5.tar.gz
 tar xvfz shibboleth-sp-2.5.6.tar.gz
-
-# install and configure apache2
-apt-get install -y apache2
-#apt-get install -y apache2-doc apache2-suexec-pristine apache2-suexec-custom apache2-utils openssl-blacklist
-#apt-get install -y libmcrypt-dev mcrypt
-#apt-get install -y php5 libapache2-mod-php5 php5-mcrypt php-pear
-#apt-get install -y php5-common php5-cli php5-curl php5-gmp php5-ldap
-#apt-get install -y libapache2-mod-gnutls
-#a2enmod gnutls
 
 # set upbasic ssl web site
 make-ssl-cert generate-default-snakeoil --force-overwrite
@@ -57,31 +46,37 @@ cd -
 
 # install xml-security
 apt-get install -y libssl-dev libcurl4-openssl-dev autoconf autoconf automake libtool
+
 cd ${SRC}/xml-security-c-1.7.3
 ./configure --disable-static --without-xalan --with-xerces=/opt/shibboleth-sp && make && make install && echo "Completed xml-security" >> ${SRC}/build.log
 cd -
 
+# install xmltooling with BOOST headers
 apt-get build-dep -y gearman-job-server
+apt-get install -y wget gcc g++ make libssl-dev libcurl4-openssl-dev apache2-threaded-dev
+
 cd ${SRC}/xmltooling-1.5.6
 ./configure --with-log4shib=/opt/shibboleth-sp --prefix=/opt/shibboleth-sp -C && make && make install && echo "Completed xmltooling" >> ${SRC}/build.log
 cd -
 
 # install opensaml
-cd ${SRC}/opensaml-2.5.5
 apt-get install --yes wget gcc g++ make libssl-dev libcurl4-openssl-dev apache2-threaded-dev
+
+cd ${SRC}/opensaml-2.5.5
 ./configure --with-log4shib=/opt/shibboleth-sp --prefix=/opt/shibboleth-sp -C && make && make install && echo "Completed opensaml" >> ${SRC}/build.log
 cd -
 
 # install Shibboloth
 cd ${SRC}/shibboleth-sp-2.5.6
-./configure --with-log4shib=/opt/shibboleth-sp --enable-apache-13  --with-apxs=/usr/bin/apxs --enable-apache-20 --with-apxs2=/usr/bin/apxs --prefix=/opt/shibboleth-sp && make && make install && echo "Completed shibboleth" >> ${SRC}/build.log
+./configure --with-log4shib=/opt/shibboleth-sp --enable-apache-24 --with-apxs24=/usr/bin/apxs --prefix=/opt/shibboleth-sp && make && make install && echo "Completed shibboleth" >> ${SRC}/build.log
 cd -
 
+exit
 
 export LD_LIBRARY_PATH=/opt/shibboleth-sp/lib
 
 cat /vagrant/etc/apache24.conf >> /etc/apache2/apache2.conf
-
+service apache2 restart
 # bug
 if [ ! -e /var/run/shibboleth ]
 then
