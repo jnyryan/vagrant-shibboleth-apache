@@ -12,7 +12,7 @@ Install [Vagrant](https://www.vagrantup.com/)
 
 ## Setup
 
-The provisioning of the VM using ```vagrant up``` uses the [install script](./install_sp_apache.sh) which does most of the heavy work:
+The provisioning of the VM using ```vagrant up``` uses the [install script](./install.sh) which does most of the heavy work:
 - Updates and installs required packages
 - Downloads/installs Shibboleth and its dependencies
 - Forwards ports on host 50080 & 50443 to VM ports 80 and 443
@@ -38,15 +38,16 @@ mkdir -p /var/run/shibboleth
 /opt/shibboleth-sp/sbin/shibd
 ```
 
-Now from the host
+Now from the host try to authenticate.
+***Note*** this should direct you to the Harvard IDP, who will give you an error as they don't know who you are.
 ```bash
 curl https://localhost:51080/secure
 ```
 
-## The setup
+## Next steps
 
-The setup for this in on the file [install script](install_sp_apache.sh) which follows the instructions in
-[Download and Install Shibboleth section of this link](http://iam.harvard.edu/resources/saml-shibboleth-integration)
+Set up an IdP
+
 
 ## Configuring and testing with Harvard IdP
 
@@ -70,7 +71,9 @@ tail /opt/shibboleth-sp/var/log/shibboleth/transaction.log
 
 ## References
 
-[https://shibboleth.net/](https://shibboleth.net/)
+[Shibboleth Home](https://shibboleth.net/)
+
+[Building the Native SP from Source on Linux](https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxSourceBuild)
 
 [Authentication How-To Guide: SAML/Shibboleth Integration with Apache](http://iam.harvard.edu/resources/saml-shibboleth-integration)
 

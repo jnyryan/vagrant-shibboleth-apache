@@ -71,23 +71,16 @@ cd ${SRC}/shibboleth-sp-2.5.6
 ./configure --with-log4shib=/opt/shibboleth-sp --enable-apache-24 --with-apxs24=/usr/bin/apxs --prefix=/opt/shibboleth-sp && make && make install && echo "Completed shibboleth" >> ${SRC}/build.log
 cd -
 
-exit
-
 # Basic Configuration
 # These steps will configure Apache to load mod_shib, supply it with proper host and scheme information, and start shibd.
 export LD_LIBRARY_PATH=/opt/shibboleth-sp/lib
 cat /vagrant/etc/apache24.conf >> /etc/apache2/apache2.conf
-# Set up metadata
+# Configure Shibboleth metadata for the IdP, in this case the Harvard Idp
 cp /vagrant/etc/stage-idp-metadata.xml /opt/shibboleth-sp/etc/shibboleth/stage-idp-metadata.xml
+cp /vagrant/etc/shibboleth2.xml /opt/shibboleth-sp/etc/shibboleth/shibboleth2.xml
 service apache2 restart
 
 # create this folder each home the server starts, as it's an Ubuntu bug
 mkdir -g /var/run/shibboleth
 # start the service
 /opt/shibboleth-sp/sbin/shibd
-
-#if [ ! -d '${SRC}/nginx-http-shibboleth' ]; then
-#  git clone https://github.com/nginx-shib/nginx-http-shibboleth.git ${SRC}/nginx-http-shibboleth
-#else
-#  echo "Already have shibboleth"
-#fi
