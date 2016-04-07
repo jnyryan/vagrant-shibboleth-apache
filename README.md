@@ -1,30 +1,46 @@
-# vagrant-shibboleth
+# vagrant-shibboleth-sp
 
-  create a shibboleth Service Provider that runs on Apache on Ubuntu
+A shibboleth Service Provider that running on Apache and Ubuntu
 
-## Usage
+## Prerequisites
 
-I have not configured it to start up automatically yet so you will need to
-ssh to the server and start it there.
+This sets up Shibboleth on a virtual machine hosted in VirtualBox and uses
+Vagrant to script the setup. You'll need both these free apps to get going.
 
-Also a bug on the Ubuntu version means the directory ```/var/run/shibboleth```
-needs to be created each time the server boots as /var/run is volatile.
+Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+Install [Vagrant](https://www.vagrantup.com/)
 
+## Setup
+
+The provisioning of the VM using ```vagrant up``` uses the [install script](./install_sp_apache.sh) which does most of the heavy work:
+- Updates and installs required packages
+- Downloads/installs Shibboleth and its dependencies
+- Forwards ports on host 50080 & 50443 to VM ports 80 and 443
+
+There is some manual work to be done on the VM once the script has completed so you will need to ssh to the server and start it there.
+
+First, provision the virtual machine
 ``` bash
 vagrant up provider=virtualbox
 ```
 
-Once ssh'd, run the following
+Now wait 20 minutes while it downloads the components, compiles and installs them
+``` bash
+vagrant ssh
+```
 
+Once ssh'd, start the service
+
+***Note*** A bug on the Ubuntu version means the directory ```/var/run/shibboleth```
+needs to be created each time the server boots as /var/run is volatile.
 ```bash
-# bug
-if [ ! -e /var/run/shibboleth ]
-then
-   mkdir /var/run/shibboleth
-fi
-
-# start the service
+mkdir -p /var/run/shibboleth
 /opt/shibboleth-sp/sbin/shibd
+```
+
+Now from the host
+```bash
+curl https://localhost:51080/secure
 ```
 
 ## The setup

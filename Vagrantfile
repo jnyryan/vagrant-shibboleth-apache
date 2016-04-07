@@ -23,10 +23,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.network :forwarded_port, guest: 80, host: 8080
 
   # SimpleSAMLphp on Docker
-  config.vm.network :forwarded_port, host: 50080, guest: 80,   auto_correct: true
-  config.vm.network :forwarded_port, host: 50081, guest: 81,   auto_correct: true
-  config.vm.network :forwarded_port, host: 50443, guest: 443,   auto_correct: true
-  config.vm.network :forwarded_port, host: 54444, guest: 444,   auto_correct: true
+  config.vm.network :forwarded_port, host: 51080, guest: 80,   auto_correct: true
+  config.vm.network :forwarded_port, host: 51443, guest: 443,   auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.

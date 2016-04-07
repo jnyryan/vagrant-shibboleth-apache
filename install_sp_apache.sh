@@ -73,16 +73,16 @@ cd -
 
 exit
 
+# Basic Configuration
+# These steps will configure Apache to load mod_shib, supply it with proper host and scheme information, and start shibd.
 export LD_LIBRARY_PATH=/opt/shibboleth-sp/lib
-
 cat /vagrant/etc/apache24.conf >> /etc/apache2/apache2.conf
+# Set up metadata
+cp /vagrant/etc/stage-idp-metadata.xml /opt/shibboleth-sp/etc/shibboleth/stage-idp-metadata.xml
 service apache2 restart
-# bug
-if [ ! -e /var/run/shibboleth ]
-then
-   mkdir /var/run/shibboleth
-fi
 
+# create this folder each home the server starts, as it's an Ubuntu bug
+mkdir -g /var/run/shibboleth
 # start the service
 /opt/shibboleth-sp/sbin/shibd
 
